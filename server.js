@@ -21,6 +21,8 @@ app.get("/hanif", (req, res) => {
     })
 })
 
+const cars = JSON.parse(fs.readFileSync(`${__dirname}/assets/data/cars.json`, "utf-8"));
+
 // /api/v1/(collection) => collection harus jamak (+s)
 app.get("/api/v1/cars", (req, res) => {
 
@@ -32,8 +34,6 @@ app.get("/api/v1/cars", (req, res) => {
         data : {cars}
     })
 })
-
-const cars = JSON.parse(fs.readFileSync(`${__dirname}/assets/data/cars.json`, "utf-8"));
 
 app.post("/api/v1/cars", (req, res) => {
     // insert into
@@ -59,6 +59,33 @@ app.post("/api/v1/cars", (req, res) => {
         isSucces: true,
         data : cars
     })
+})
+
+app.get("/api/v1/cars/:id", (req, res) => {
+    // select * from  fsw2 where id = "1" or name = "Hanif"
+    const id = req.params.id * 1;
+    console.log(id);
+
+    const car = cars.find((i) => i.id === id);
+
+    console.log(car);
+    if (!car){
+        return res.status(404).json({
+            status: "Failed",
+            message : `Failed get car data this: ${id}`,
+            isSucces: false,
+            data : null
+        });
+    }
+
+    res.status(200).json({
+        status: "Succes",
+        message : "Success get car data",
+        isSucces: true,
+        data : {
+            car,
+        },
+    });
 })
 
 // middleware / handler untuk url yang tidak dapat diakses karena memang tidak ada diaplikasi
